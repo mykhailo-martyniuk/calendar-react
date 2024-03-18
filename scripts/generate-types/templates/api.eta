@@ -1,0 +1,22 @@
+<%
+const { utils, route, config, modelTypes } = it;
+const { _, classNameCase, require } = utils;
+const apiClassName = classNameCase(route.moduleName);
+const routes = route.routes;
+const dataContracts = _.map(modelTypes, "name");
+%>
+
+<% if (config.httpClientType === config.constants.HTTP_CLIENT.AXIOS) { %> import { AxiosRequestConfig, AxiosResponse } from "axios"; <% } %>
+
+import httpClient, { HttpResponse, RequestParams, ContentType, API_VERSION } from "@/Services/Api/Api";
+<% if (dataContracts.length) { %>
+import { <%~ dataContracts.join(", ") %> } from "@/types/types.generated"
+<% } %>
+
+const Api<%= apiClassName %> = {
+    <% routes.forEach((route) => { %>
+        <%~ includeFile('./procedure-call.eta', { ...it, route }) %>
+    <% }) %>
+}
+
+export default Api<%= apiClassName %>;
